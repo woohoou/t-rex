@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/trex/static/css/main.922f5d75.chunk.css",
-    "main.js": "/trex/static/js/main.b52aa281.chunk.js",
-    "main.js.map": "/trex/static/js/main.b52aa281.chunk.js.map",
-    "runtime-main.js": "/trex/static/js/runtime-main.98c6f4ce.js",
-    "runtime-main.js.map": "/trex/static/js/runtime-main.98c6f4ce.js.map",
-    "static/js/2.cf0585f0.chunk.js": "/trex/static/js/2.cf0585f0.chunk.js",
-    "static/js/2.cf0585f0.chunk.js.map": "/trex/static/js/2.cf0585f0.chunk.js.map",
-    "index.html": "/trex/index.html",
-    "precache-manifest.8c3e1c4f08293084b415dd606b971bd4.js": "/trex/precache-manifest.8c3e1c4f08293084b415dd606b971bd4.js",
-    "service-worker.js": "/trex/service-worker.js",
-    "static/css/main.922f5d75.chunk.css.map": "/trex/static/css/main.922f5d75.chunk.css.map",
-    "static/js/2.cf0585f0.chunk.js.LICENSE.txt": "/trex/static/js/2.cf0585f0.chunk.js.LICENSE.txt",
-    "static/media/hit.ogx": "/trex/static/media/hit.f77027a4.ogx",
-    "static/media/press.ogx": "/trex/static/media/press.217f1c0d.ogx",
-    "static/media/reach.ogx": "/trex/static/media/reach.70507912.ogx"
+    "main.css": "/t-rex/static/css/main.922f5d75.chunk.css",
+    "main.js": "/t-rex/static/js/main.7e2980a0.chunk.js",
+    "main.js.map": "/t-rex/static/js/main.7e2980a0.chunk.js.map",
+    "runtime-main.js": "/t-rex/static/js/runtime-main.efa74af7.js",
+    "runtime-main.js.map": "/t-rex/static/js/runtime-main.efa74af7.js.map",
+    "static/js/2.cf0585f0.chunk.js": "/t-rex/static/js/2.cf0585f0.chunk.js",
+    "static/js/2.cf0585f0.chunk.js.map": "/t-rex/static/js/2.cf0585f0.chunk.js.map",
+    "index.html": "/t-rex/index.html",
+    "precache-manifest.da5bcfca975510aaff072425cd198678.js": "/t-rex/precache-manifest.da5bcfca975510aaff072425cd198678.js",
+    "service-worker.js": "/t-rex/service-worker.js",
+    "static/css/main.922f5d75.chunk.css.map": "/t-rex/static/css/main.922f5d75.chunk.css.map",
+    "static/js/2.cf0585f0.chunk.js.LICENSE.txt": "/t-rex/static/js/2.cf0585f0.chunk.js.LICENSE.txt",
+    "static/media/hit.ogx": "/t-rex/static/media/hit.f77027a4.ogx",
+    "static/media/press.ogx": "/t-rex/static/media/press.217f1c0d.ogx",
+    "static/media/reach.ogx": "/t-rex/static/media/reach.70507912.ogx"
   },
   "entrypoints": [
-    "static/js/runtime-main.98c6f4ce.js",
+    "static/js/runtime-main.efa74af7.js",
     "static/js/2.cf0585f0.chunk.js",
     "static/css/main.922f5d75.chunk.css",
-    "static/js/main.b52aa281.chunk.js"
+    "static/js/main.7e2980a0.chunk.js"
   ]
 }
