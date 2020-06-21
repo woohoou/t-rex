@@ -23,7 +23,7 @@ class StartGame extends React.Component {
 const StartGame = ({ isRunning, stopGame, startGame }) => {
   return (
     <button
-      onClick={ e => isRunning ? stopGame.call(this) : startGame.call(this) }
+      onClick={ isRunning ? stopGame.bind(this) : startGame.bind(this) }
     >
       {isRunning ? 'Stop Game' : 'Start Game'}
     </button>
@@ -35,11 +35,14 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  startGame: (e) => { 
-    debugger
+  startGame: (e) => {
+    document.activeElement.blur();
     dispatch(startGame());
   },
-  stopGame: () => dispatch(stopGame()) 
+  stopGame: (e) => {
+    document.activeElement.blur();
+    dispatch(stopGame());
+  }
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(StartGame);
