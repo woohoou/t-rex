@@ -10,6 +10,9 @@ class Score extends Actor {
     this.blinkCounter = 0;
     this.hideCurrentScore = false;
     this.posX = (this.sceneSize['width']/3)*2;
+    if(this.posX + this.actorProperties['width']*14 > this.sceneSize['width']) {
+      this.posX = this.sceneSize['width'] - this.actorProperties['width']*14;
+    }
     this.posY = this.sceneSize['height']/6;
   }
 

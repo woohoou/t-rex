@@ -141,10 +141,25 @@ class Trex extends Actor {
   }
 
   /**
-   * Alias method of raise
+   * Actions
    */
   jump() {
-    this.raise()
+    if(!this.isJumping) {
+      this.extraFallSpeed = false;
+      this.isJumping = true;
+      this.gameInstance.soundFx.playSound('PRESS');
+      this.raise();
+    }
+  }
+
+  down() {
+    this.state = 'DOWN';
+    this.extraFallSpeed = true;
+  }
+
+  run() {
+    this.state = 'RUNNING'; 
+    this.extraFallSpeed = false;
   }
 
   /**
@@ -156,20 +171,14 @@ class Trex extends Actor {
     switch(action) {
       case 'DOWN':
         if(keyAction === 'keydown') {
-          this.state = 'DOWN';
-          this.extraFallSpeed = true;
+          this.down();
         } else if(keyAction === 'keyup') {
-          this.state = 'RUNNING'; 
-          this.extraFallSpeed = false;
+          this.run();
         }
         break;
       case 'JUMP':
         if(keyAction === 'keydown') {
-          if(!this.isJumping) {
-            this.isJumping = true;
-            this.gameInstance.soundFx.playSound('PRESS');
-            this.jump();
-          }
+          this.jump();
         }
         break;
       default:

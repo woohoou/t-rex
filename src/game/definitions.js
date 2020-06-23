@@ -6,7 +6,7 @@ const RESOLUTION = 'LDPI';
 export const sceneDefinition = (() => {
   const config = {
     LDPI: {
-      SIZE: { width: 482, height: 150 }
+      SIZE: { width: window.innerWidth < 482 ? window.innerWidth : 482, height: 150 }
     }
   }
   return config[RESOLUTION];
