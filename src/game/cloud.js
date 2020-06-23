@@ -13,10 +13,16 @@ class Cloud extends Actor {
     this.updatePosition();
   }
 
+  /**
+   * Calculate the "y" coordinate of the cloud spawned
+   */
   static ySeed() {
     return Math.random() * (Cloud.yRange[0] - Cloud.yRange[1]) + Cloud.yRange[1];
   }
 
+  /**
+   * Update the position of the actor in canvas
+   */
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
     this.posX -= 0.5;

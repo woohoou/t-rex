@@ -15,14 +15,23 @@ class Pterodactyl extends Actor {
     this.animate();
   }
 
+  /**
+   * Calculate the "y" coordinate of the cloud spawned
+   */
   static ySeed() {
     return Math.random() * (this.yRange[0] - this.yRange[1]) + this.yRange[1];
   }
 
+  /**
+   * Calculate the speed of the actor spawned from right to left
+   */
   static speedSeed() {
     return Math.random() * (this.speedRange[0] - this.speedRange[1]) + this.speedRange[1];
   }
 
+  /**
+   * Animate the wings of the actor
+   */
   animate() {
     this.gameInstance.lastTimeoutId = setTimeout( () => {
       this.wingsOpen = !this.wingsOpen
@@ -62,6 +71,9 @@ class Pterodactyl extends Actor {
     }
   }
 
+  /**
+   * Trigger the actor in scene from right to left
+   */
   show() {
     this.posX = this.sceneSize['width'];
     this.speed = this.gameInstance.speed + Pterodactyl.speedSeed();
@@ -69,6 +81,9 @@ class Pterodactyl extends Actor {
     this.updatePosition();
   }
 
+  /**
+   * Update the position of the actor in canvas
+   */
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
     if(this.isOverlappedBy(this.gameInstance.character)) {

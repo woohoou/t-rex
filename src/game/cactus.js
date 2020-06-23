@@ -18,29 +18,25 @@ class Cactus extends Actor {
     return (this.actorProperties['width']/6)*this.cactusCount;
   }
 
+  /**
+   * Get the first or second part of the sprite image
+   */
   positionSeed() {
     const positions = [0, this.actorProperties['width']/2];
     return positions[Math.floor(Math.random() * positions.length)];
   }
 
+  /**
+   * Define the frequency distribution number of the cactus (how many cactus spawn togeter)
+   */
   static countSeed(){
     const items = [1,1,1,1,2,2,2,3,3];
     return Math.ceil((Math.random() * items[Math.floor(Math.random() * items.length)] -1)+1);
   }
 
-  drawCoordinates () {
-    return [[
-      this.spriteX(),
-      this.spriteY(),
-      this.width(),
-      this.height(),
-      this.x(),
-      this.y(),
-      this.width(),
-      this.height()
-    ]];
-  }
-
+  /**
+   * Trigger the actor in scene from right to left
+   */
   show() {
     this.posX = this.sceneSize['width'];
     this.cactusCount = Cactus.countSeed();
@@ -48,6 +44,9 @@ class Cactus extends Actor {
     this.updatePosition();
   }
 
+  /**
+   * Update the position of the actor in canvas
+   */
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
     if(this.isOverlappedBy(this.gameInstance.character)) {

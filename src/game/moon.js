@@ -11,6 +11,9 @@ class Moon extends Actor {
     this.updatePosition();
   }
 
+  /**
+   * Calculate which moon will spawn
+   */
   static seedMoon() {
     return Math.floor(Math.random() * (6-0));
   }
@@ -27,6 +30,9 @@ class Moon extends Actor {
     }
   }
 
+  /**
+   * Update the position of the actor in canvas
+   */
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
     this.posX -= 0.2;

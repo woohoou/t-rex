@@ -10,6 +10,9 @@ class Horizon extends Actor {;
     this.updatePosition();
   }
 
+  /**
+   * Update the position of the actor in canvas
+   */
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
     this.posX += this.gameInstance.speed;

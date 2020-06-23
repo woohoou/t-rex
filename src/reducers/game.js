@@ -4,10 +4,8 @@ const gameReducer = (state = [], action) => {
       return ({ ...state, playing: true })
     case 'STOP_GAME':
       return ({ ...state, playing: false })
-    case 'INCREASE_LEVEL':
+    case 'SET_LEVEL':
       return ({ ...state, level: action.level })
-    case 'INCREASE_LEVEL_PROGRESS':
-      return ({ ...state, level: action.levelProgress })
     default:
       return state;
   }

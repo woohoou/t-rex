@@ -1,3 +1,6 @@
+/**
+ * Handle the input events from keyboard
+ */
 export const CHARACTER_INPUT = {
   JUMP: [38, 32], // Up, spacebar
   DOWN: [40] // Down

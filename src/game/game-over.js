@@ -1,5 +1,8 @@
 import Actor from './actor';
 
+/**
+ * Game over text
+ */
 class GameOver extends Actor {
   constructor(gameInstance) {
     super('GAME_OVER', gameInstance);

@@ -1,5 +1,8 @@
 const RESOLUTION = 'LDPI';
 
+/**
+ * Scene dimensions
+ */
 export const sceneDefinition = (() => {
   const config = {
     LDPI: {
@@ -9,6 +12,9 @@ export const sceneDefinition = (() => {
   return config[RESOLUTION];
 })();
 
+/**
+ * Sprite mapping
+ */
 export const spriteDefinition = (() => {
   const config = {
     LDPI: {

@@ -1,5 +1,8 @@
 import Actor from './actor';
 
+/**
+ * Restart icon
+ */
 class Restart extends Actor {
   constructor(gameInstance) {
     super('RESTART', gameInstance);

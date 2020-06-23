@@ -1,6 +1,9 @@
 import Actor from './actor';
 
 class Trex extends Actor {
+  /**
+   * Different positions of the T-Rex
+   */
   STATES = {
     STAND: 'STAND',
     RUNNING: 'RUNNING',
@@ -9,6 +12,9 @@ class Trex extends Actor {
     DOWN: 'DOWN'
   };
 
+  /**
+   * Mapping te state with the image index in sprite
+   */
   STATE_POSITION = {
     STAND_0: 0,
     STAND_1: 1,
@@ -22,6 +28,9 @@ class Trex extends Actor {
     DOWN_1: 7
   };
 
+  /**
+   * Default properties
+   */
   state = 'RUNNING';
   isJumping = false;
   offsetY = 0;
@@ -33,6 +42,10 @@ class Trex extends Actor {
     this.animate();
   }
 
+  /**
+   * Change the position of the T-Rex
+   * @param {String} state 
+   */
   changeState(state) {
     this.state = state;
   }
@@ -76,6 +89,9 @@ class Trex extends Actor {
       return this.actorProperties['height']
   }
 
+  /**
+   * Animate the steps of the actor
+   */
   animate() {
     this.gameInstance.lastTimeoutId = setTimeout(() => {
       this.position = !this.position
@@ -83,6 +99,9 @@ class Trex extends Actor {
     }, 200-(this.gameInstance.speed*10));
   }
 
+  /**
+   * Calculate the boundaries of the T-Rex, it uses a smaller square to improve the gamplay
+   */
   coordinates() {
     // Decrease sensibility in overlapping
     let x = this.x() + 15;
@@ -97,19 +116,9 @@ class Trex extends Actor {
     return [[x, y], [x+width, y+height]];
   }
 
-  drawCoordinates () {
-    return [[
-      this.spriteX(),
-      this.spriteY(),
-      this.width(),
-      this.height(),
-      this.x(),
-      this.y(),
-      this.width(),
-      this.height(),
-    ]];
-  }
-
+  /**
+   * T-Rex in the skies, the first part of the jump
+   */
   raise() {
     if(this.offsetY > -1*(this.sceneSize['height']-(this.height()*1.5)) && !this.extraFallSpeed) {
       this.offsetY -= 4;
@@ -117,6 +126,9 @@ class Trex extends Actor {
     } else this.fall();
   }
 
+  /**
+   * T-Rex going down, the second part of the jump
+   */
   fall () {
     if(this.offsetY < 0) {
       this.offsetY += 4;
@@ -128,6 +140,9 @@ class Trex extends Actor {
     }
   }
 
+  /**
+   * Alias method of raise
+   */
   jump() {
     this.raise()
   }

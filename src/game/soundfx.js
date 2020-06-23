@@ -2,6 +2,9 @@ import pressSound from '../assets/sounds/press.ogx';
 import reachSound from '../assets/sounds/reach.ogx';
 import hitSound from '../assets/sounds/hit.ogx';
 
+/**
+ * Sound player
+ */
 class SoundFx {
   constructor() {
     this.press = new Audio()

@@ -4,6 +4,9 @@ import { sceneDefinition } from '../game/definitions';
 import Game from '../game';
 import ProgressBar from './ProgressBar';
 
+/**
+ * The canvas component
+ */
 class Scene extends React.Component {
   game = null;
   progressBarTimeoutId = null;
@@ -17,6 +20,14 @@ class Scene extends React.Component {
     level: 0
   }
 
+  /**
+   * Observe props update
+   * 1. Start / stop game
+   * 2. Level up
+   * @param {Object} prevProps 
+   * @param {Object} prevState 
+   * @param {Object} snapshot 
+   */
   componentDidUpdate(prevProps, prevState, snapshot) {
     if(this.props.playing && !this.game) {
       this.game = new Game();
@@ -33,6 +44,9 @@ class Scene extends React.Component {
     }
   }
 
+  /**
+   * Increment progress bar percentage
+   */
   startTiming() {
     if(this.props.level > 0 && this.game && !this.game.isGameOver) {
       this.progressBarTimeoutId = setTimeout( () => {
@@ -46,12 +60,15 @@ class Scene extends React.Component {
     }
   }
 
+  /**
+   * Render the level, level progress bar and canvas
+   */
   render() {
     if(this.props.playing)
       return (
-        <div id="scene">
+        <div id="scene" style={{marginTop: '25px'}}>
           <center>Level: {this.props.level}</center>
-          <div style={{width: sceneDefinition['SIZE']['width'], marginLeft: 'auto', marginRight: 'auto'}}>
+          <div style={{width: sceneDefinition['SIZE']['width'], marginLeft: 'auto', marginRight: 'auto', marginBottom: '25px'}}>
             <ProgressBar progress={this.state.levelProgress}></ProgressBar>
           </div>
           <canvas className="runner-canvas" width={sceneDefinition['SIZE']['width']} height={sceneDefinition['SIZE']['height']}></canvas>

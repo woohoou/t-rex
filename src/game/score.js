@@ -13,6 +13,9 @@ class Score extends Actor {
     this.posY = this.sceneSize['height']/6;
   }
 
+  /**
+   * Animate the blink after reach a hundred number
+   */
   blinkScore() {
     if(!this.gameInstance.isGameOver) {
       this.blink = true;
@@ -31,6 +34,9 @@ class Score extends Actor {
     }
   }
 
+  /**
+   * Calculate the digits positions of the score
+   */
   drawCoordinates() {
     let coordinates = [];
 
@@ -75,12 +81,14 @@ class Score extends Actor {
       for(let i = 4 ; i >= 0; --i) {
         let digit = Math.floor(score / Math.pow(10, i));
 
+        // Blink if change the hundred number
         if(i === 2) {
           if(digit !== this.lastHundredScore) {
             this.blinkScore();
           }
           this.lastHundredScore = digit;
         }
+        // If blink stay the hundred with 0's
         if(this.blink && i <= 1) {
           coordinates.push(
             [

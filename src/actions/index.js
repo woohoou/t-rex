@@ -6,7 +6,7 @@ export const stopGame = () => ({
   type: 'STOP_GAME'
 });
 
-export const increaseLevel = (level) => ({
-  type: 'INCREASE_LEVEL',
+export const setLevel = (level) => ({
+  type: 'SET_LEVEL',
   level: level
 })

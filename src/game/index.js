@@ -1,4 +1,4 @@
-import { increaseLevel as increaseLevelAction } from '../actions';
+import { setLevel as setLevelAction } from '../actions';
 import sprite from '../assets/images/100-offline-sprite.png';
 import { sceneDefinition } from './definitions';
 import { generateInputEvents } from './input';
@@ -51,16 +51,13 @@ class Game {
     this.actors = [];
     this.obstaclesQueue.clear();
     this.restartLevel();
-    this.increaseLevel();
+    this.incrementLevel();
     this.removeListeners();
     this.removePendingActions();
 
-    // Start new game
-    this.soundFx.playSound('REACH');
-
     // Speed
     this.speed = 5;
-    this.increaseSpeed();
+    this.incrementSpeed();
 
     // Obstacles
     this.generateCactus();
@@ -81,7 +78,7 @@ class Game {
     this.score = new Score(this);
     let highScore = parseInt(localStorage.getItem('highScore'));
     if(highScore) this.score.highScore = highScore;
-    this.increaseScore();
+    this.incrementScore();
 
     // Draw
     this.draw();
@@ -189,39 +186,40 @@ class Game {
    */
   restartLevel() {
     this.level = 0;
-    this.dispatch(increaseLevelAction(this.level));
+    this.dispatch(setLevelAction(this.level));
   }
 
   /**
-   * Initialize if level does not exist and increase by 1 and dispatch to state
+   * Initialize if level does not exist and increment by 1 and dispatch to state
    */
-  increaseLevel() {
+  incrementLevel() {
     if(!this.level)
       this.level = 1;
     else
       ++this.level;
-    this.dispatch(increaseLevelAction(this.level));
+    this.soundFx.playSound('REACH');
+    this.dispatch(setLevelAction(this.level));
   }
  
   /**
-   * Increase game speed n (levelDuration config) seconds
+   * increment game speed n (levelDuration config) seconds
    */
-  increaseSpeed() {
+  incrementSpeed() {
     this.lastTimeoutId = setInterval(() => {
-      this.increaseLevel();
+      this.incrementLevel();
       ++this.speed;
     }, 1000*this.levelDuration);
     if(!this.firstTimeoutId) this.firstTimeoutId = this.lastTimeoutId;
   }
 
   /**
-   * Increase the score by 1 each 100ms
+   * increment the score by 1 each 100ms
    */
-  increaseScore() {
+  incrementScore() {
     this.lastTimeoutId = setTimeout(() => {
       if(!this.isGameOver) {
         ++this.score.currentScore;
-        this.increaseScore();
+        this.incrementScore();
       }
     }, 100);
   }

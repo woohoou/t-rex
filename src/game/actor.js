@@ -22,34 +22,67 @@ class Actor {
     this.actorProperties = spriteDefinition[name];
   }
 
+  /**
+   * Calculate the "x" coordinate image in sprite for the current actor
+   * @return {Integer}
+   */
   spriteX() {
     return this.actorProperties['x'];
   }
 
+  /**
+   * Calculate the "y" coordinate image in sprite for the current actor
+   * @return {Integer}
+   */
   spriteY() {
     return this.actorProperties['y'];
   }
 
+  /**
+   * Calculate the current x position in canvas
+   * @return {Integer}
+   */
   x() {
     return this.posX;
   }
 
+  /**
+   * Calculate the current y position in canvas
+   * @return {Integer}
+   */
   y() {
     return this.posY;
   }
 
+  /**
+   * Calculate the current width of the actor
+   * @return {Integer}
+   */
   width() {
     return this.actorProperties['width'];
   }
 
+  /**
+   * Calculate the current height of the actor
+   * @return {Integer}
+   */
   height() {
     return this.actorProperties['height'];
   }
 
+  /**
+   * Calculate the boundaries of the actor
+   * @return {Array}
+   */
   coordinates() {
     return [[this.x(), this.y()], [this.x()+this.width(), this.y()+this.height()]];
   }
 
+  /**
+   * Calculate if the boundaries of the current actor is overlapping by the parameter actor
+   * @param {Actor} actor 
+   * @return {Boolen}
+   */
   isOverlappedBy(actor) {
     const coord1 = this.coordinates();
     const coord2 = actor.coordinates();
@@ -63,7 +96,9 @@ class Actor {
   }
 
   /**
-   * Get spaen
+   * Static
+   * Calculate a random offset position when the actor is spawned
+   * @return {Float}
    */
   static spawnSeed() {
     return Math.random() * (this.spawnRange[0]-this.spawnRange[1]) + this.spawnRange[1];

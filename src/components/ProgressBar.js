@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Simple css progress bar
+ */
 class ProgressBar extends React.Component {
   static defaultProps = {
     progress: 0, 
