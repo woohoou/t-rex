@@ -29,6 +29,7 @@ class Trex extends Actor {
   
   constructor(gameInstance) {
     super('TREX', gameInstance);
+    this.extraFallSpeed = false;
     this.animate();
   }
 
@@ -36,12 +37,12 @@ class Trex extends Actor {
     this.state = state;
   }
 
-  actorX() {
+  x() {
     return 20;
   }
 
-  actorY() {
-    return this.offsetY + this.sceneSize['height'] - this.actorHeight();
+  y() {
+    return this.offsetY + this.sceneSize['height'] - this.height();
   }
 
   spriteX() {
@@ -61,14 +62,14 @@ class Trex extends Actor {
       return this.actorProperties['y'];
   }
 
-  actorWidth() {
+  width() {
     if(this.state === 'DOWN')
       return this.actorProperties['width'] + this.actorProperties['widthDiff'];
     else
       return this.actorProperties['width'];
   }
 
-  actorHeight() {
+  height() {
     if(this.state === 'DOWN')
       return this.actorProperties['height'] - this.actorProperties['heightDiff'];
     else
@@ -76,37 +77,55 @@ class Trex extends Actor {
   }
 
   animate() {
-    setTimeout(() => {
+    this.gameInstance.lastTimeoutId = setTimeout(() => {
       this.position = !this.position
       this.animate();
-    }, 300-(this.gameInstance.speed*10));
+    }, 200-(this.gameInstance.speed*10));
+  }
+
+  coordinates() {
+    // Decrease sensibility in overlapping
+    let x = this.x() + 15;
+    let width = this.width()-30;
+    let y = this.y() + 10;
+    let height = this.height()-20;
+
+    if(this.state === 'DOWN') {
+      y = this.y() + 5;
+      height = this.height()-10;
+    }
+    return [[x, y], [x+width, y+height]];
   }
 
   drawCoordinates () {
     return [[
       this.spriteX(),
       this.spriteY(),
-      this.actorWidth(),
-      this.actorHeight(),
-      this.actorX(),
-      this.actorY(),
-      this.actorWidth(),
-      this.actorHeight(),
+      this.width(),
+      this.height(),
+      this.x(),
+      this.y(),
+      this.width(),
+      this.height(),
     ]];
   }
 
   raise() {
-    if(this.offsetY > (this.sceneSize['height']/4)*-2) {
-      this.offsetY -= 5;
+    if(this.offsetY > -1*(this.sceneSize['height']-(this.height()*1.5)) && !this.extraFallSpeed) {
+      this.offsetY -= 4;
       requestAnimationFrame(this.raise.bind(this));
     } else this.fall();
   }
 
   fall () {
     if(this.offsetY < 0) {
-      this.offsetY += 5;
+      this.offsetY += 4;
+      if(this.extraFallSpeed) this.offsetY += 3;
       requestAnimationFrame(this.fall.bind(this));
-    } else this.isJumping = false;
+    } else {
+      this.offsetY = 0;
+      this.isJumping = false;
+    }
   }
 
   jump() {
@@ -118,12 +137,15 @@ class Trex extends Actor {
    * @param {String} action 
    */
   handleInput(action, keyAction) {
+    if(this.gameInstance.isGameOver) return;
     switch(action) {
       case 'DOWN':
         if(keyAction === 'keydown') {
           this.state = 'DOWN';
+          this.extraFallSpeed = true;
         } else if(keyAction === 'keyup') {
           this.state = 'RUNNING'; 
+          this.extraFallSpeed = false;
         }
         break;
       case 'JUMP':

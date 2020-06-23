@@ -1,35 +1,44 @@
 import Actor from './actor';
 
-class Cloud extends Actor {
-  static spawnRange = [10, 3];
+class Star extends Actor {
   static yRange = [100, 10]
 
   constructor(gameInstance) {
-    super('CLOUD', gameInstance);
+    super('STAR', gameInstance);
 
     this.posX = this.sceneSize['width'];
-    this.posY = Cloud.ySeed();
+    this.posY = Star.ySeed();
+    this.currentStar = Star.seedStar();
 
     this.updatePosition();
   }
 
   static ySeed() {
-    return Math.random() * (Cloud.yRange[0] - Cloud.yRange[1]) + Cloud.yRange[1];
+    return Math.random() * (Star.yRange[0] - Star.yRange[1]) + Star.yRange[1];
+  }
+
+  static seedStar() {
+    return Math.floor(Math.random() * (3-0));
+  }
+
+  spriteY() {
+    return this.actorProperties['y'] + (this.actorProperties['height'] * this.currentStar);
   }
 
   updatePosition() {
     if(this.gameInstance.isGameOver || !this.active ) return;
-    this.posX -= 0.5;
+    this.posX -= 0.2;
     if(this.x()+this.width() < 0) {
       this.gameInstance.lastTimeoutId = setTimeout(() => {
         this.posX = this.sceneSize['width'];
-        this.posY = Cloud.ySeed();
+        this.posY = Star.ySeed();
+        this.currentStar = Star.seedStar();
         requestAnimationFrame(this.updatePosition.bind(this));
-      }, Cloud.spawnSeed() * 1000);
+      }, 42000);
     } else {
       requestAnimationFrame(this.updatePosition.bind(this));
     }
   }
 }
 
-export default Cloud;
+export default Star;

@@ -1,62 +1,86 @@
 import Actor from './actor';
 
 class Pterodactyl extends Actor {
-  static spawnRange = [20, 5];
   static yRange = [100, 30]
   static speedRange = [0.5, -0.5]
 
   constructor(gameInstance) {
     super('PTERODACTYL', gameInstance);
 
-    this.x = this.sceneSize['width'];
-    this.y = Pterodactyl.ySeed();
+    this.posX = this.sceneSize['width'];
+    this.posY = Pterodactyl.ySeed();
 
-    this.upWingsDirection = false;
+    this.wingsOpen = false;
     this.speed = this.gameInstance.speed + Pterodactyl.speedSeed();
-    this.updatePosition();
     this.animate();
   }
 
   static ySeed() {
-    return Math.floor(Math.random() * (this.yRange[0] - this.yRange[1]) + this.yRange[1]);
+    return Math.random() * (this.yRange[0] - this.yRange[1]) + this.yRange[1];
   }
 
   static speedSeed() {
-    return Math.floor(Math.random() * (this.speedRange[0] - this.speedRange[1]) + this.speedRange[1]);
+    return Math.random() * (this.speedRange[0] - this.speedRange[1]) + this.speedRange[1];
   }
 
   animate() {
-    setTimeout( () => {
-      this.upWingsDirection = !this.upWingsDirection
+    this.gameInstance.lastTimeoutId = setTimeout( () => {
+      this.wingsOpen = !this.wingsOpen
       this.animate();
     }, 250);
   }
 
-  updatePosition() {
-    this.x -= this.speed;
-    if(this.x+this.actorProperties['width'] < 0) {
-      setTimeout(() => {
-        this.x = this.sceneSize['width'];
-        this.speed = this.gameInstance.speed + Pterodactyl.speedSeed();
-        this.y = Pterodactyl.ySeed();
-        requestAnimationFrame(this.updatePosition.bind(this));
-      }, Pterodactyl.spawnSeed() * 1000);
+  spriteX() {
+    if(this.wingsOpen) {
+      return this.actorProperties['x']+this.width();
     } else {
-      requestAnimationFrame(this.updatePosition.bind(this));
+      return this.actorProperties['x'];
     }
   }
 
-  drawCoordinates () {
-    return [[
-      this.actorProperties['x']+(this.upWingsDirection ? this.actorProperties['width'] : 0),
-      this.actorProperties['y'],
-      this.actorProperties['width'],
-      this.actorProperties['height'],
-      this.x,
-      this.y,
-      this.actorProperties['width'],
-      this.actorProperties['height']
-    ]];
+  spriteY() {
+    if(this.wingsOpen) {
+      return this.actorProperties['yWingsOpen'];
+    } else {
+      return this.actorProperties['y'];
+    }
+  }
+
+  y() {
+    if(this.wingsOpen) {
+      return this.posY - 6;
+    } else {
+      return this.posY;
+    }
+  }
+
+  height() {
+    if(this.wingsOpen) {
+      return this.actorProperties['heightWingsOpen'];
+    } else {
+      return this.actorProperties['height'];
+    }
+  }
+
+  show() {
+    this.posX = this.sceneSize['width'];
+    this.speed = this.gameInstance.speed + Pterodactyl.speedSeed();
+    this.posY = Pterodactyl.ySeed();
+    this.updatePosition();
+  }
+
+  updatePosition() {
+    if(this.gameInstance.isGameOver || !this.active ) return;
+    if(this.isOverlappedBy(this.gameInstance.character)) {
+      this.gameInstance.gameOver();
+    }
+
+    this.posX -= this.speed;
+
+    if(this.x()+this.width() < 0)
+      this.gameInstance.obstaclesQueue.add(this);
+    else
+      requestAnimationFrame(this.updatePosition.bind(this));
   }
 }
 

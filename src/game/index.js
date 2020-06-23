@@ -1,51 +1,93 @@
 import sprite from '../assets/images/100-offline-sprite.png';
 import { sceneDefinition } from './definitions';
 import { generateInputEvents } from './input';
+import Score from './score';
 import Horizon from './horizon';
 import Cloud from './cloud';
+import Moon from './moon';
+import Star from './star';
+import Actor from './actor';
 import CactusSmall from './cactus-small';
 import CactusLarge from './cactus-large';
 import Pterodactyl from './pterodactyl';
 import Trex from './trex';
 import SoundFx from './soundfx';
+import Queue from '../utils/queue';
+import GameOver from './game-over';
+import Restart from './restart';
 
 /**
- * Main game class that manages all the game logic
+ * Main game class, manages all the game logic.
  */
 class Game {
   /**
    * Initialize the game instance drawing all the elements needed
    */
   constructor() {
-    let canvas = document.querySelector('.runner-canvas');
-    this.ctx = canvas.getContext('2d');
+    this.canvas = document.querySelector('.runner-canvas');
+    this.ctx = this.canvas.getContext('2d');
     this.image = new Image();
     this.image.src = sprite;
-    this.image.onload = this.initialize.bind(this);
+    this.initializeCallback = this.initialize.bind(this);
+    this.image.onload = this.initializeCallback;
     this.soundFx = new SoundFx();
     this.levelDuration = 15;
     this.firstTimeoutId = null;
     this.lastTimeoutId = null;
+    this.actors = [];
+    this.obstaclesQueue = new Queue()
+    this.debug = false;
     generateInputEvents(this);
   }
 
   /**
-   * Generate all actors in scene
+   * Generate all actors in scene, config, score, queues
    */
   initialize() {
-    this.speed = 5;
-    this.score = 0;
+    // Clear last game
+    this.isGameOver = false;
     this.actors = [];
+    this.obstaclesQueue.clear();
+    this.removeListeners();
     this.removePendingActions();
 
-    this.actors.push(new Horizon(this));
-    this.draw();
+    // Start new game
+    this.soundFx.playSound('REACH');
+
+    // Speed
+    this.speed = 5;
     this.increaseSpeed();
-    this.generateClouds();
+
+    // Obstacles
     this.generateCactus();
     this.generatePterodactyls();
+    let obstacles = this.actors.sort(() => Math.random() - 0.5);
+    obstacles.forEach((item) => this.obstaclesQueue.add(item));
+    this.showObstacle();
+
+    // Scene
+    this.actors.push(new Horizon(this));
+    this.generateClouds();
+    this.generateSky();
+
+    // Character
     this.character = new Trex(this);
-    this.actors.push(this.character);
+
+    // Score
+    this.score = new Score(this);
+    let highScore = parseInt(localStorage.getItem('highScore'));
+    if(highScore) this.score.highScore = highScore;
+    this.increaseScore();
+
+    // Draw
+    this.draw();
+  }
+
+  /**
+   * Remove last game listeners
+   */
+  removeListeners() {
+    this.canvas.removeEventListener('click', this.initializeCallback, false);
   }
 
   /**
@@ -61,53 +103,101 @@ class Game {
   }
  
   /**
-   * Generate 7 random clouds
-   * When the clouds are not in scene spawn again between 3 and 10 seconds
+   * Generate random clouds
    */
   generateClouds() {
     for(let i = 0; i < 5 ; ++i) {
-      const timeoutId = setTimeout(() => {
+      this.lastTimeoutId = setTimeout(() => {
         this.actors.push(new Cloud(this));
       }, Cloud.spawnSeed()*1000*i);
-      this.lastTimeoutId = timeoutId;
     }
   }
 
   /**
-   * Generate 5 cactus 3 small and 2 large of different sizes
+   * Generate moon and stars
+   */
+  generateSky() {
+    for(let i = 0 ; i < 2 ; ++i) {
+      this.lastTimeoutId = setTimeout( () => this.actors.push(new Star(this)), 21000 + (i * 4000));
+    }
+    this.lastTimeoutId = setTimeout( () => this.actors.push(new Moon(this)), 21000 + 12000);
+    for(let i = 3 ; i < 5 ; ++i) {
+      this.lastTimeoutId = setTimeout( () => this.actors.push(new Star(this)), 21000 + 12000 + (i * 4000))
+    }
+  }
+
+  /**
+   * Generate random small and large cactus
    */
   generateCactus() {
-    for(let i = 0; i < 4 ; ++i) {
-      if(i < 2) {
-        const timeoutId = setTimeout(() => {
-          this.actors.push(new CactusSmall(this));
-        }, CactusSmall.spawnSeed()*1000*(i+1));  
-        this.lastTimeoutId = timeoutId;
+    for(let i = 0; i < 15 ; ++i) {
+      if(i < 10) {
+        const actor = new CactusSmall(this)
+        this.actors.push(actor);
       } else {
-        const timeoutId = setTimeout(() => {
-          this.actors.push(new CactusLarge(this));
-        }, CactusLarge.spawnSeed()*1000*(i+1));  
-        this.lastTimeoutId = timeoutId;
+        const actor = new CactusLarge(this)
+        this.actors.push(actor);
       }
     }
   }
 
+  /**
+   * Generate random pterodactyl actors
+   */
   generatePterodactyls() {
-    for(let i = 0; i < 3 ; ++i) {
-      const timeoutId = setTimeout(() => {
-        this.actors.push(new Pterodactyl(this));
-      }, Pterodactyl.spawnSeed()*1000);
-      this.lastTimeoutId = timeoutId;
+    for(let i = 0; i < 4 ; ++i) {
+      const actor = new Pterodactyl(this)
+      this.actors.push(actor);
     }
   }
 
   /**
-   * Increase game speed n seconds
+   * Restart the game calling initialize function
+   */
+  restartGame() {
+    this.gameOver();
+    this.initialize();
+  }
+
+  /**
+   * Create game over state game
+   */
+  gameOver() {
+    this.soundFx.playSound('HIT');
+    this.character.state = 'DEATH';
+    this.isGameOver = true;
+    
+    // Save higher score if is greater
+    let highScore = parseInt(localStorage.getItem('highScore'));
+    if(highScore < this.score.currentScore || !highScore)
+      localStorage.setItem('highScore', this.score.currentScore);
+
+    this.actors.push(new GameOver(this));
+    this.actors.push(new Restart(this));
+
+    this.canvas.addEventListener('click', this.initializeCallback, false);
+      
+    this.actors.forEach((item) => item.active = false);
+  }
+
+  /**
+   * Increase game speed n (levelDuration config) seconds
    */
   increaseSpeed() {
-    const timeoutId = setInterval(() => ++this.speed, 1000*this.levelDuration);
-    if(!this.firstTimeoutId) this.firstTimeoutId = timeoutId;
-    this.lastTimeoutId = timeoutId;
+    this.lastTimeoutId = setInterval(() => ++this.speed, 1000*this.levelDuration);
+    if(!this.firstTimeoutId) this.firstTimeoutId = this.lastTimeoutId;
+  }
+
+  /**
+   * Increase the score by 1 each 100ms
+   */
+  increaseScore() {
+    this.lastTimeoutId = setTimeout(() => {
+      if(!this.isGameOver) {
+        ++this.score.currentScore;
+        this.increaseScore();
+      }
+    }, 100);
   }
 
   /**
@@ -118,13 +208,29 @@ class Game {
     switch(action) {
       case 'RESTART':
         if(keyAction === 'keyup') {
-          this.soundFx.playSound('REACH');
-          this.initialize();
+          this.restartGame();
         }
         break;
       default:
         break;
     }
+  }
+  
+  /**
+   * Manage the obstacles using obstaclesQueue
+   */
+  showObstacle() {
+    const next = this.obstaclesQueue.next();
+    let waitTime = 600;
+    if(next && next.name === 'PTERODACTYL')
+      waitTime = 400;
+    this.lastTimeoutId = setTimeout(() => {
+      const actor = this.obstaclesQueue.remove()
+      if(actor && !this.isGameOver) {
+        actor.show();
+        this.showObstacle();
+      }
+    }, waitTime+(Actor.spawnSeed()*1000));
   }
 
   /**
@@ -134,10 +240,27 @@ class Game {
     this.ctx.clearRect(0, 0, sceneDefinition['SIZE']['width'], sceneDefinition['SIZE']['height']);
     for(let actor of this.actors) {
       for(let coordinates of actor.drawCoordinates()) {
+        if(this.debug && actor.name !== 'HORIZON') {
+          const actorCoords = actor.coordinates();
+          this.ctx.beginPath();
+          this.ctx.strokeStyle = "blue";
+          this.ctx.arc(actorCoords[0][0], actorCoords[0][1], 2, 0, 2*Math.PI, false);
+          this.ctx.arc(actorCoords[1][0], actorCoords[0][1], 2, 0, 2*Math.PI, false);
+          this.ctx.arc(actorCoords[1][0], actorCoords[1][1], 2, 0, 2*Math.PI, false);
+          this.ctx.arc(actorCoords[0][0], actorCoords[1][1], 2, 0, 2*Math.PI, false);
+          this.ctx.arc(actorCoords[0][0], actorCoords[0][1], 2, 0, 2*Math.PI, false);
+          this.ctx.stroke();
+        }
         this.ctx.drawImage(...[this.image,...coordinates]);
       }
     }
-    requestAnimationFrame(this.draw.bind(this));
+    if(this.score)
+      for(let coordinate of this.score.drawCoordinates())
+        this.ctx.drawImage(...[this.image,...coordinate]);
+    if(this.character)
+      for(let coordinate of this.character.drawCoordinates())
+        this.ctx.drawImage(...[this.image,...coordinate]);
+    if(!this.isGameOver) requestAnimationFrame(this.draw.bind(this));
   }
 }
 

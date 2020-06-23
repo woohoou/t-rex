@@ -9,8 +9,10 @@ class Scene extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     if(this.props.isRunning && !this.game)
       this.game = new Game();
-    else if(!this.props.isRunning)
+    else if(!this.props.isRunning) {
+      this.game.gameOver();
       this.game = null;
+    }
   }
 
   render() {

@@ -4,14 +4,15 @@ class Horizon extends Actor {;
   constructor(gameInstance) {
     super('HORIZON', gameInstance);
 
-    this.x = 0;
-    this.y = this.sceneSize['height']-this.actorProperties['height'];
+    this.posX = 0;
+    this.posY = this.sceneSize['height']-this.height();
 
     this.updatePosition();
   }
 
   updatePosition() {
-    this.x += this.gameInstance.speed;
+    if(this.gameInstance.isGameOver || !this.active ) return;
+    this.posX += this.gameInstance.speed;
     requestAnimationFrame(this.updatePosition.bind(this));
   }
 
@@ -20,31 +21,31 @@ class Horizon extends Actor {;
    */
   drawCoordinates () {
     // Restart x position counter
-    if(this.actorProperties['x']+this.x >= this.actorProperties['width'])
-      this.x = 0;
+    if(this.spriteX()+this.x() >= this.width())
+      this.posX = 0;
     
     // Main horizon image
     let coordinates = [[
-      this.actorProperties['x']+this.x,
-      this.actorProperties['y'],
+      this.spriteX()+this.x(),
+      this.spriteY(),
       this.sceneSize['width'],
-      this.actorProperties['height'],
+      this.height(),
       0,
-      this.y,
+      this.y(),
       this.sceneSize['width'],
-      this.actorProperties['height']
+      this.height()
     ]];
     // Auxiliar horizon image (when the main is finish)
-    if(this.actorProperties['x']+this.x+this.sceneSize['width'] >= this.actorProperties['width']) {
+    if(this.spriteX()+this.x()+this.sceneSize['width'] >= this.width()) {
       coordinates.push([
-        this.actorProperties['x']+this.x-this.actorProperties['width'],
-        this.actorProperties['y'],
+        this.spriteX()+this.x()-this.width(),
+        this.spriteY(),
         this.sceneSize['width'],
-        this.actorProperties['height'],
+        this.height(),
         0,
-        this.y,
+        this.y(),
         this.sceneSize['width'],
-        this.actorProperties['height']
+        this.height()
       ])
     }
     return coordinates;

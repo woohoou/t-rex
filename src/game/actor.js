@@ -6,9 +6,10 @@ import { sceneDefinition, spriteDefinition } from './definitions';
 class Actor {
   sceneSize = sceneDefinition['SIZE'];
   spriteSize = spriteDefinition['SIZE'];
-  x = 0;
-  y = 0;
-  static spawnRange = [1, 1];
+  active = true;
+  posX = 0;
+  posY = 0;
+  static spawnRange = [2, 0];
 
   /**
    * Initialize required properties
@@ -21,6 +22,46 @@ class Actor {
     this.actorProperties = spriteDefinition[name];
   }
 
+  spriteX() {
+    return this.actorProperties['x'];
+  }
+
+  spriteY() {
+    return this.actorProperties['y'];
+  }
+
+  x() {
+    return this.posX;
+  }
+
+  y() {
+    return this.posY;
+  }
+
+  width() {
+    return this.actorProperties['width'];
+  }
+
+  height() {
+    return this.actorProperties['height'];
+  }
+
+  coordinates() {
+    return [[this.x(), this.y()], [this.x()+this.width(), this.y()+this.height()]];
+  }
+
+  isOverlappedBy(actor) {
+    const coord1 = this.coordinates();
+    const coord2 = actor.coordinates();
+
+    const l1 = { x: coord1[0][0], y: coord1[0][1] };
+    const r1 = { x: coord1[1][0], y: coord1[1][1] };
+    const l2 = { x: coord2[0][0], y: coord2[0][1] };
+    const r2 = { x: coord2[1][0], y: coord2[1][1] };
+
+   return r1.x >= l2.x && l1.x <= r2.x && l1.y <= r2.y && r1.y >= l2.y;
+  }
+
   /**
    * Get spaen
    */
@@ -31,16 +72,16 @@ class Actor {
   /**
    * Get the coordinates to draw the element in canvas
    */
-  drawCoordinates () {
+  drawCoordinates() {
     return [[
-      this.actorProperties['x'],
-      this.actorProperties['y'],
-      this.actorProperties['width'],
-      this.actorProperties['height'],
-      this.x,
-      this.y,
-      this.actorProperties['width'],
-      this.actorProperties['height']
+      this.spriteX(),
+      this.spriteY(),
+      this.width(),
+      this.height(),
+      this.x(),
+      this.y(),
+      this.width(),
+      this.height()
     ]];
   }
 }

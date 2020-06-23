@@ -1,50 +1,65 @@
 import Actor from './actor';
 
-class Cactus extends Actor {;
-  static spawnRange = [7, 4];
-
+class Cactus extends Actor {
   constructor(name, gameInstance) {
     super(name, gameInstance);
 
-    this.x = this.sceneSize['width'];
-    this.y = this.sceneSize['height']-this.actorProperties['height'];
+    this.posX = this.sceneSize['width'];
+    this.posY = this.sceneSize['height']-this.actorProperties['height'];
+    this.cactusPosition = this.positionSeed();
     this.cactusCount = 1;
+  }
 
-    this.updatePosition();
+  spriteX() {
+    return this.actorProperties['x'] + this.cactusPosition;
   }
   
   width() {
     return (this.actorProperties['width']/6)*this.cactusCount;
   }
 
+  positionSeed() {
+    const positions = [0, this.actorProperties['width']/2];
+    return positions[Math.floor(Math.random() * positions.length)];
+  }
+
   static countSeed(){
-    return Math.floor((Math.random() * (3-1)+1));
+    const items = [1,1,1,1,2,2,2,3,3];
+    return Math.ceil((Math.random() * items[Math.floor(Math.random() * items.length)] -1)+1);
   }
 
   drawCoordinates () {
     return [[
-      this.actorProperties['x'],
-      this.actorProperties['y'],
+      this.spriteX(),
+      this.spriteY(),
       this.width(),
-      this.actorProperties['height'],
-      this.x,
-      this.y,
+      this.height(),
+      this.x(),
+      this.y(),
       this.width(),
-      this.actorProperties['height']
+      this.height()
     ]];
   }
 
+  show() {
+    this.posX = this.sceneSize['width'];
+    this.cactusCount = Cactus.countSeed();
+    this.cactusPosition = this.positionSeed();
+    this.updatePosition();
+  }
+
   updatePosition() {
-    this.x -= this.gameInstance.speed;
-    if(this.x+this.width() < 0) {
-      setTimeout(() => {
-        this.x = this.sceneSize['width'];
-        this.cactusCount = Cactus.countSeed();
-        requestAnimationFrame(this.updatePosition.bind(this));
-      }, Cactus.spawnSeed() * 1000);
-    } else {
-      requestAnimationFrame(this.updatePosition.bind(this));
+    if(this.gameInstance.isGameOver || !this.active ) return;
+    if(this.isOverlappedBy(this.gameInstance.character)) {
+      this.gameInstance.gameOver();
     }
+
+    this.posX -= this.gameInstance.speed;
+
+    if(this.x()+this.width() < 0)
+      this.gameInstance.obstaclesQueue.add(this);
+    else
+      requestAnimationFrame(this.updatePosition.bind(this));
   }
 }
 
