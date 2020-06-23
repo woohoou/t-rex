@@ -7,7 +7,7 @@ import StartGame from '../containers/StartGame';
 const Header = () => {
   return (
     <header className="App-header">
-      the rushed t-rex
+      run t-rex run
       <StartGame></StartGame>
     </header>
   );
