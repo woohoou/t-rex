@@ -27,9 +27,7 @@ class Scene extends React.Component {
     }
 
     if(this.props.level !== prevProps.level) {
-      this.setState({
-        levelProgress: 0
-      })
+      this.setState({ levelProgress: 0 })
       clearTimeout(this.progressBarTimeoutId);
       this.startTiming();
     }
