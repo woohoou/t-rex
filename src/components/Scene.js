@@ -29,10 +29,10 @@ class Scene extends React.Component {
    * @param {Object} snapshot 
    */
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if(this.props.playing && !this.game) {
+    if(this.props.isPlaying && !this.game) {
       this.game = new Game();
       this.game.dispatch = this.props.dispatch;
-    } else if(!this.props.playing) {
+    } else if(!this.props.isPlaying) {
       if(this.game) this.game.gameOver();
       this.game = null;
     }
@@ -64,7 +64,7 @@ class Scene extends React.Component {
    * Render the level, level progress bar and canvas
    */
   render() {
-    if(this.props.playing)
+    if(this.props.isPlaying)
       return (
         <div id="scene" style={{marginTop: '25px'}}>
           <center>Level: {this.props.level}</center>
@@ -79,7 +79,7 @@ class Scene extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  playing: state.game.playing,
+  isPlaying: state.game.isPlaying,
   level: state.game.level
 });
 

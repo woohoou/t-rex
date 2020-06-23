@@ -5,18 +5,18 @@ import { startGame, stopGame } from '../actions';
 /**
  * Start game button
  */
-const StartGame = ({ isRunning, stopGame, startGame }) => {
+const StartGame = ({ isPlaying, stopGame, startGame }) => {
   return (
     <button
-      onClick={ isRunning ? stopGame.bind(this) : startGame.bind(this) }
+      onClick={ isPlaying ? stopGame.bind(this) : startGame.bind(this) }
     >
-      {isRunning ? 'Stop Game' : 'Start Game'}
+      {isPlaying ? 'Stop Game' : 'Start Game'}
     </button>
   );
 }
 
 const mapStateToProps = state => ({
-  isRunning: state.game.isRunning
+  isPlaying: state.game.isPlaying
 });
 
 const mapDispatchToProps = dispatch => ({
