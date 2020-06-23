@@ -1,3 +1,4 @@
+import { increaseLevel as increaseLevelAction } from '../actions';
 import sprite from '../assets/images/100-offline-sprite.png';
 import { sceneDefinition } from './definitions';
 import { generateInputEvents } from './input';
@@ -26,6 +27,7 @@ class Game {
   constructor() {
     this.canvas = document.querySelector('.runner-canvas');
     this.ctx = this.canvas.getContext('2d');
+    this.dispatch = null;
     this.image = new Image();
     this.image.src = sprite;
     this.initializeCallback = this.initialize.bind(this);
@@ -44,10 +46,12 @@ class Game {
    * Generate all actors in scene, config, score, queues
    */
   initialize() {
-    // Clear last game
+    // Setup
     this.isGameOver = false;
     this.actors = [];
     this.obstaclesQueue.clear();
+    this.restartLevel();
+    this.increaseLevel();
     this.removeListeners();
     this.removePendingActions();
 
@@ -181,10 +185,32 @@ class Game {
   }
 
   /**
+   * Set level to 0 and dispatch to state
+   */
+  restartLevel() {
+    this.level = 0;
+    this.dispatch(increaseLevelAction(this.level));
+  }
+
+  /**
+   * Initialize if level does not exist and increase by 1 and dispatch to state
+   */
+  increaseLevel() {
+    if(!this.level)
+      this.level = 1;
+    else
+      ++this.level;
+    this.dispatch(increaseLevelAction(this.level));
+  }
+ 
+  /**
    * Increase game speed n (levelDuration config) seconds
    */
   increaseSpeed() {
-    this.lastTimeoutId = setInterval(() => ++this.speed, 1000*this.levelDuration);
+    this.lastTimeoutId = setInterval(() => {
+      this.increaseLevel();
+      ++this.speed;
+    }, 1000*this.levelDuration);
     if(!this.firstTimeoutId) this.firstTimeoutId = this.lastTimeoutId;
   }
 
