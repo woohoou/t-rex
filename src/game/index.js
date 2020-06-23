@@ -53,7 +53,6 @@ class Game {
     this.restartLevel();
     this.incrementLevel();
     this.removeListeners();
-    this.removePendingActions();
 
     // Speed
     this.speed = 5;
@@ -98,6 +97,7 @@ class Game {
     if(this.firstTimeoutId && this.lastTimeoutId) {
       while(this.lastTimeoutId >= this.firstTimeoutId) {
         clearTimeout(this.lastTimeoutId)
+        clearInterval(this.lastTimeoutId)
         --this.lastTimeoutId;
       }
     }
@@ -179,6 +179,7 @@ class Game {
     this.canvas.addEventListener('click', this.initializeCallback, false);
       
     this.actors.forEach((item) => item.active = false);
+    this.removePendingActions();
   }
 
   /**
@@ -206,8 +207,10 @@ class Game {
    */
   incrementSpeed() {
     this.lastTimeoutId = setInterval(() => {
-      this.incrementLevel();
-      ++this.speed;
+      if(!this.isGameOver) {
+        this.incrementLevel();
+        ++this.speed;
+      }
     }, 1000*this.levelDuration);
     if(!this.firstTimeoutId) this.firstTimeoutId = this.lastTimeoutId;
   }
